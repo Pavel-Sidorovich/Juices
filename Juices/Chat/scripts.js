@@ -1,61 +1,62 @@
-TheTextBox3;
-// Флаги для определения браузеров
-var uagent = navigator.userAgent.toLowerCase();
-var is_safari = ((uagent.indexOf('safari') != -1) || (navigator.vendor == "Apple Computer, Inc."));
-var is_ie = ((uagent.indexOf('msie') != -1) && (!is_opera) && (!is_safari) && (!is_webtv));
-var is_ie4 = ((is_ie) && (uagent.indexOf("msie 4.") != -1));
-var is_moz = (navigator.product == 'Gecko');
-var is_ns = ((uagent.indexOf('compatible') == -1) && (uagent.indexOf('mozilla') != -1) && (!is_opera) && (!is_webtv) && (!is_safari));
-var is_ns4 = ((is_ns) && (parseInt(navigator.appVersion) == 4));
-var is_opera = (uagent.indexOf('opera') != -1);
-var is_kon = (uagent.indexOf('konqueror') != -1);
-var is_webtv = (uagent.indexOf('webtv') != -1);
-var is_win = ((uagent.indexOf("win") != -1) || (uagent.indexOf("16bit") != -1));
-var is_mac = ((uagent.indexOf("mac") != -1) || (navigator.vendor == "Apple Computer, Inc."));
-var ua_vers = parseInt(navigator.appVersion);
-
-function SendClick() {
-        var TheTextBox = document.getElementById('entermessages');
-        if (TheTextBox3.value && TheTextBox.value) {
-            var TheTextBox2 = document.getElementById('messages');
-            if (!TheTextBox2.value)
-                TheTextBox2.value = TheTextBox3.value + ': ' + TheTextBox.value;
-            else 
-                TheTextBox2.value = TheTextBox2.value + '\n' + TheTextBox3.value + ': ' + TheTextBox.value;
-        }
-        TheTextBox.value = null;
-        TheTextBox3 = null;
-}
-function SaveClick() {
-    TheTextBox3 = document.getElementById('entername');
-}
-function Selected() {
-    getSelection(document.getElementById('messages'));
-}
-function getSelection(textarea)
-{
-    var selection = null;
-    if ((ua_vers >= 4) && is_ie && is_win) {
-        if (textarea.isTextEdit) {
-            textarea.focus();
-            var sel = document.selection;
-            var rng = sel.createRange();
-            rng.collapse;
-            if((sel.type == "Text" || sel.type == "None") && rng != null)
-                selection = rng.text;
-        }
-        } else if (typeof(textarea.selectionEnd) != "undefined" ) { 
-            selection = (textarea.value).substring(textarea.selectionStart, textarea.selectionEnd);
-        }
-    return selection;
-}
-function Delete() {
-    var sel = getSelection(document.getElementById('messages'));
-    if (sel) {
-        var TheTextBox4 = document.getElementById('messages');
-        TheTextBox4.value = str_replace(sel + '\n', '', TheTextBox4.value);
+function sendClick() {
+    var TheTextBoxTwo = document.getElementById('entername');
+    var TheTextBoxOne = document.getElementById('entermessages');
+    if (TheTextBoxTwo.value && TheTextBoxOne.value) {
+        var parentElem = document.body.children[3];
+        var d = document.createElement('div');
+        //d.id = 
+        d.nameId = TheTextBoxTwo.value;
+        d.innerHTML = TheTextBoxTwo.value + ': ' + TheTextBoxOne.value;
+        parentElem.appendChild(d);
     }
+    TheTextBoxOne.value = null;
 }
-function str_replace(search, replace, subject) {
-    return subject.split(search).join(replace);
+
+function remove(elem) {
+    var parentElement = elem.parentNode;
+    parentElement.removeChild(elem);
+}
+
+function deleteClick() {
+    var TheTextBoxTwo = document.getElementById('entername');
+    var children = document.getElementById('block2').childNodes;
+    var count = 0;
+    for(var i=0;i<children.length; i++) {
+        if (window.getSelection().containsNode(children[i], true)) {
+            var d2 = children[i];
+            count += 1;
+        }
+    }
+    if (count == 1)
+        if (d2.nameId == TheTextBoxTwo.value)
+            remove(d2);
+}
+
+function renameClick() {
+    var TheTextBoxTwo = document.getElementById('entername');
+    var TheTextBoxOne = document.getElementById('entermessages');
+    var d = document.createElement('div');
+    d.nameId = TheTextBoxTwo.value;
+    var count = 0;
+    d.innerHTML = TheTextBoxTwo.value + ': ' + TheTextBoxOne.value;
+    var children = document.getElementById('block2').childNodes;
+    for (var i = 0; i < children.length; i++) {
+        if (window.getSelection().containsNode(children[i], true)) {
+            var d2 = children[i];
+            count += 1;
+
+        }
+    }
+    if (TheTextBoxTwo.value && TheTextBoxOne.value) {
+        if (count == 1)
+            if (d2.nameId == d.nameId)
+                rename(d2, d);
+    }
+    TheTextBoxOne.value = null;
+}
+
+function rename(elem, d) {
+    var parentElement = elem.parentNode;
+    parentElement.insertBefore(d, elem);
+    parentElement.removeChild(elem);
 }
