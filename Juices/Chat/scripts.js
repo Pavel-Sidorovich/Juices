@@ -1,10 +1,43 @@
 var messageList = [];
 
-function theMessage(message, nick, done, id) {
+//var lastToken = 'chat';
+
+//var url = 'http://localhost:999/chat?token=TN11EN';
+
+//ajax('GET', url, function (jsonResult){
+
+//    document.body.innerHTML = jsonResult;
+
+//});
+
+//function ajax(method, url, toReturn) {
+
+//    var xhr = new XMLHttpRequest();
+//    xhr.open(method || 'GET', url, true);
+//    xhr.onload = function () {
+//       // if (xhr.readyState != 4)
+//           // return;
+//        toReturn(xhr.responseText);
+//    };
+//    xhr.ontimeout = function () { toReturn('Timed out !'); };
+//    xhr.onerror = function (e) { toReturn('Error !'); };
+//    xhr.send();
+//}
+
+//callServer(lastToken, function (response) {
+
+//    var data = JSON.parse(response.content);
+
+//    document.body.innerHTML = data.messages[0];
+
+//    lastToken = data.token;
+
+//});
+
+function theMessage(message, nick, id) {
     return {
         description: message,
         nameId: nick,
-        done: done,
         id: id
     };
 };
@@ -17,52 +50,51 @@ function uniqueId() {
 };
 
 function sendClick() {
-    var TheTextBoxTwo = document.getElementById('entername');
-    var TheTextBoxOne = document.getElementById('entermessages');
-    if (TheTextBoxTwo.value && TheTextBoxOne.value) {
+    var name = document.getElementById('entername');
+    var msg = document.getElementById('entermessages');
+    if (name.value && msg.value) {
         var parentElem = document.body.children[3];
-        var d = document.createElement('div');
-        d.setAttribute("onclick", 'select(this)');
-        d.id = uniqueId();
-        messageList.push(theMessage(TheTextBoxOne.value, TheTextBoxTwo.value, true, d.id));
-        d.done = true;
-        d.description = TheTextBoxOne.value;
-        d.nameId = TheTextBoxTwo.value;
-        d.innerHTML = d.nameId + ': ' + d.description;
-        parentElem.appendChild(d);
+        var div = document.createElement('div');
+        div.setAttribute("onclick", 'select(this)');
+        div.id = uniqueId();
+        messageList.push(theMessage(msg.value, name.value, div.id));
+        div.description = msg.value;
+        div.nameId = name.value;
+        div.innerHTML = div.nameId + ': ' + div.description;
+        parentElem.appendChild(div);
         store(messageList);
     }
-    TheTextBoxOne.value = null;
+    msg.value = null;
 }
 
-function select(el) {
-    if (el.style.color == 'black') {
-        el.style.background = 'LightSlateGray';
-        el.style.color = 'red';
+function select(elem) {
+    if (elem.style.color == 'black') {
+        elem.style.background = 'LightSlateGray';
+        elem.style.color = 'red';
     }
     else {
-        el.style.background = 'Cornsilk';
-        el.style.color = 'black';
+        elem.style.background = 'Cornsilk';
+        elem.style.color = 'black';
     }
 }
 
 function deleteClick() {
-    var TheTextBoxTwo = document.getElementById('entername');
+    var name = document.getElementById('entername');
     var children = document.getElementById('block2').childNodes;
     var count = 0;
     for (var i = 0; i < children.length; i++) {
         if (children[i].style.color == 'red') {
-            var d2 = children[i];
+            var deleteDiv = children[i];
             count += 1;
         }
     }
     if (count == 1)
         for (var i = 0; i < messageList.length; i++) {
-            if (messageList[i].id == d2.id)
-                if (d2.nameId == TheTextBoxTwo.value) {
-                    messageList[i].done = false;
+            if (messageList[i].id == deleteDiv.id)
+                if (deleteDiv.nameId == name.value) {
+                    messageList.splice(i, 1);
                     store(messageList);
-                    remove(d2);
+                    remove(deleteDiv);
                 }
         }
 }
@@ -73,46 +105,45 @@ function remove(elem) {
 }
 
 function renameClick() {
-    var TheTextBoxTwo = document.getElementById('entername');
-    var TheTextBoxOne = document.getElementById('entermessages');
-    var d = document.createElement('div');
-    d.setAttribute("onclick", 'select(this)');
-    d.nameId = TheTextBoxTwo.value;
+    var name = document.getElementById('entername');
+    var msg = document.getElementById('entermessages');
+    var div = document.createElement('div');
+    div.setAttribute("onclick", 'select(this)');
+    div.nameId = name.value;
     var count = 0;
-    d.done = true;
-    d.description = TheTextBoxOne.value;
-    d.nameId = TheTextBoxTwo.value;
-    d.innerHTML = d.nameId + ': ' + d.description;
+    div.description = msg.value;
+    div.nameId = name.value;
+    div.innerHTML = div.nameId + ': ' + div.description;
     var children = document.getElementById('block2').childNodes;
     for (var i = 0; i < children.length; i++) {
         if (children[i].style.color == 'red') {
-            var d2 = children[i];
+            var renameDiv = children[i];
             count += 1;
         }
     }
-    if (TheTextBoxTwo.value && TheTextBoxOne.value) {
+    if (name.value && msg.value) {
         if (count == 1)
             for (var i = 0; i < messageList.length; i++) {
-                if (messageList[i].id == d2.id)
-                    if (d2.nameId == TheTextBoxTwo.value) {
-                        messageList[i].description = TheTextBoxOne.value;
+                if (messageList[i].id == renameDiv.id)
+                    if (renameDiv.nameId == name.value) {
+                        messageList[i].description = msg.value;
                         store(messageList);
-                        rename(d2, d);
+                        rename(renameDiv, div);
                     }
             }
-        TheTextBoxOne.value = null;
+        msg.value = null;
     }
 }
 
-function rename(elem, d) {
+function rename(elem, newElem) {
     var parentElement = elem.parentNode;
-    d.id = elem.id;
-    parentElement.insertBefore(d, elem);
+    newElem.id = elem.id;
+    parentElement.insertBefore(newElem, elem);
     parentElement.removeChild(elem);
 }
 
 function store(listToSave) {
-   // output(listToSave);
+    //output(listToSave);
     if (typeof (Storage) == "undefined") {
         return;
     }
@@ -122,16 +153,14 @@ function store(listToSave) {
 function createAllMSG(arr) {
     var parentElem = document.body.children[3];
     for (var i = 0; i < arr.length; i++) {
-        if (arr[i].done != false) {
-            var d = document.createElement('div');
-            d.setAttribute("onclick", 'select(this)');
-            d.id = arr[i].id;
-            d.nameId = arr[i].nameId;
-            d.description = arr[i].description;
-            d.innerHTML = d.nameId + ': ' + d.description;
-            parentElem.appendChild(d);
-            messageList.push(arr[i]);
-        }
+        var div = document.createElement('div');
+        div.setAttribute("onclick", 'select(this)');
+        div.id = arr[i].id;
+        div.nameId = arr[i].nameId;
+        div.description = arr[i].description;
+        div.innerHTML = div.nameId + ': ' + div.description;
+        parentElem.appendChild(div);
+        messageList.push(arr[i]);
         document.getElementById('entername').value = arr[arr.length - 1].nameId;
     }
 }
@@ -149,7 +178,7 @@ function run() {
     //localStorage.clear();
     var array = restore() || [];
     createAllMSG(array);
-    //output(messageList);
+   // output(messageList);
 }
 
 //function output(value) {
