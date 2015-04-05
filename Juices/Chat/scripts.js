@@ -1,39 +1,5 @@
 var messageList = [];
 
-//var lastToken = 'chat';
-
-//var url = 'http://localhost:999/chat?token=TN11EN';
-
-//ajax('GET', url, function (jsonResult){
-
-//    document.body.innerHTML = jsonResult;
-
-//});
-
-//function ajax(method, url, toReturn) {
-
-//    var xhr = new XMLHttpRequest();
-//    xhr.open(method || 'GET', url, true);
-//    xhr.onload = function () {
-//       // if (xhr.readyState != 4)
-//           // return;
-//        toReturn(xhr.responseText);
-//    };
-//    xhr.ontimeout = function () { toReturn('Timed out !'); };
-//    xhr.onerror = function (e) { toReturn('Error !'); };
-//    xhr.send();
-//}
-
-//callServer(lastToken, function (response) {
-
-//    var data = JSON.parse(response.content);
-
-//    document.body.innerHTML = data.messages[0];
-
-//    lastToken = data.token;
-
-//});
-
 function theMessage(message, nick, id) {
     return {
         description: message,
