@@ -1,0 +1,1 @@
+SELECT text FROM messages ORDER BY date;
