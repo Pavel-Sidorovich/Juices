@@ -74,10 +74,10 @@ public class TaskServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("doPost");
         String data = ServletUtil.getMessageBody(request);
-        logger.info(data);
         try {
             JSONObject json = stringToJson(data);
             Mess mess = jsonToTask(json);
+            logger.info(mess.getUser() + " : " + mess.getMessage());
             MessStorage.addTask(mess);
             XMLHistoryUtil.addData(mess);
             response.setStatus(HttpServletResponse.SC_OK);

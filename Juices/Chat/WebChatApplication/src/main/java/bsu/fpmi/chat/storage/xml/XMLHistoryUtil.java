@@ -140,7 +140,7 @@ public final class XMLHistoryUtil {
             String user = taskElement.getElementsByTagName(USER).item(0).getTextContent();
             Mess mess = new Mess(message, user, id);
             tasks.add(mess);
-            Logger.getLogger(TaskServlet.class.getName()).info(mess);
+            Logger.getLogger(TaskServlet.class.getName()).info(user + " : " + message);
         }
         return tasks;
     }
