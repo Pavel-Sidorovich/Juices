@@ -79,7 +79,7 @@ function deleteClick() {
             if ( messagesList[i].id == id) {
                 if (name.value == user.toString()) {
                     del(appState.mainUrl, JSON.stringify(messagesList[i]));
-                    appState.messagesList.splice(i, 1);
+                    appState.taskList.splice(i, 1);
                     remove(document.getElementById(id));
                 }
             }

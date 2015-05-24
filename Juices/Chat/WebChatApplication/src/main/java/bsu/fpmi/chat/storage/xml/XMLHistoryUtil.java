@@ -120,6 +120,27 @@ public final class XMLHistoryUtil {
         }
     }
 
+    public static synchronized void deleteData(Mess mess) throws ParserConfigurationException, SAXException, IOException, TransformerException, XPathExpressionException {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document document = documentBuilder.parse(STORAGE_LOCATION);
+        Element root = document.getDocumentElement();
+        NodeList taskList = root.getElementsByTagName(TASK);
+        for (int i = 0; i < taskList.getLength(); i++) {
+            Element taskElement = (Element) taskList.item(i);
+            String id = taskElement.getAttribute(ID);
+            if(id.equals(mess.getId())) {
+                Logger.getLogger(TaskServlet.class.getName()).info(id);
+                root.removeChild(taskElement);
+            }
+            Transformer transformer = getTransformer();
+
+            DOMSource source = new DOMSource(document);
+            StreamResult result = new StreamResult(new File(STORAGE_LOCATION));
+            transformer.transform(source, result);
+        }
+    }
+
     public static synchronized boolean doesStorageExist() {
         File file = new File(STORAGE_LOCATION);
         return file.exists();
@@ -151,6 +172,7 @@ public final class XMLHistoryUtil {
         Document document = documentBuilder.parse(STORAGE_LOCATION);
         document.getDocumentElement().normalize();
         Element root = document.getDocumentElement(); // Root <tasks> element
+        root.getElementsByTagName(MESSAGES).getLength();
         return root.getElementsByTagName(TASK).getLength();
     }
 

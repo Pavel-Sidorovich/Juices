@@ -44,4 +44,12 @@ public final class MessStorage {
 		return null;
 	}
 
+    public static void deleteTaskById(String id) {
+        for (Mess mess : INSTANSE) {
+            if (mess.getId().equals(id)) {
+                INSTANSE.remove(mess);
+            }
+        }
+    }
+
 }

@@ -125,6 +125,33 @@ public class TaskServlet extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("doDelete");
+        String data = ServletUtil.getMessageBody(request);
+        try {
+            JSONObject json = null;
+            json = stringToJson(data);
+            Mess mess = jsonToTask(json);
+            String id = mess.getId();
+            Mess taskToUpdate = MessStorage.getTaskById(id);
+            XMLHistoryUtil.deleteData(taskToUpdate);
+            MessStorage.deleteTaskById(id);
+            response.setStatus(HttpServletResponse.SC_OK);
+        } catch (ParseException e) {
+            logger.error(e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private String formResponse(int index) {
         JSONObject jsonObject = new JSONObject();
