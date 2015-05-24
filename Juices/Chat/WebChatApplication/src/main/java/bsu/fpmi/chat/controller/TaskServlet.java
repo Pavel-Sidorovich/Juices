@@ -35,7 +35,7 @@ public class TaskServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        try {
+       try {
             loadHistory();
         } catch (SAXException e) {
             logger.error(e);
@@ -58,6 +58,7 @@ public class TaskServlet extends HttpServlet {
             int index = getIndex(token);
             logger.info("Index " + index);
             String tasks = formResponse(index);
+            response.setCharacterEncoding(ServletUtil.UTF_8);
             response.setContentType(ServletUtil.APPLICATION_JSON);
             PrintWriter out = response.getWriter();
             out.print(tasks);
