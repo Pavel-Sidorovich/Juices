@@ -36,7 +36,7 @@ public class TaskServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
        try {
-            loadHistory();
+           loadHistory();
         } catch (SAXException e) {
             logger.error(e);
         } catch (ParserConfigurationException e) {

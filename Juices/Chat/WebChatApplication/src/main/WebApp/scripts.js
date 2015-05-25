@@ -32,15 +32,7 @@ function sendClick() {
     var name = document.getElementById('entername');
     var msg = document.getElementById('entermessages');
     if (name.value && msg.value) {
-        var parentElem = document.body.children[3];
-        var div = document.createElement('div');
-        div.setAttribute("onclick", 'select(this)');
-        div.id = uniqueId();
-        div.message = msg.value;
-        div.user = name.value;
-        div.innerHTML = div.user + ': ' + div.message;
-        parentElem.appendChild(div);
-        addMessage(div.user, div.message, div.id);
+        addMessage(name.value, msg.value, uniqueId());
     }
     msg.value = null;
 }
@@ -78,6 +70,7 @@ function deleteClick() {
         for (var i = 0; i < messagesList.length; i++) {
             if ( messagesList[i].id == id) {
                 if (name.value == user.toString()) {
+                    messagesList.splice(i, 1);
                     del(appState.mainUrl, JSON.stringify(messagesList[i]));
                     appState.taskList.splice(i, 1);
                     remove(document.getElementById(id));
@@ -217,7 +210,7 @@ function ajax(method, url, data, continueWith, continueWithError) {
 }
 
 function run() {
-    restore();
+    setInterval("restore()", 1000);
 }
 
 function createAllMSG(arr) {
