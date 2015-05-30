@@ -8,7 +8,7 @@ function mes(message, user, id) {
         user: user,
         id: id
     };
-};
+}
 
 var id = -1;
 var user;
@@ -19,7 +19,7 @@ var appState = {
     mainUrl: 'chat',
     taskList: [],
     token: 'TE11EN'
-};
+}
 
 function uniqueId() {
     var date = Date.now();
@@ -70,14 +70,14 @@ function deleteClick() {
         for (var i = 0; i < messagesList.length; i++) {
             if ( messagesList[i].id == id) {
                 if (name.value == user.toString()) {
-                    messagesList.splice(i, 1);
                     del(appState.mainUrl, JSON.stringify(messagesList[i]));
+                    messagesList.splice(i, 1);
                     appState.taskList.splice(i, 1);
                     remove(document.getElementById(id));
                 }
             }
         }
-   }
+    }
 }
 
 function remove(elem) {
@@ -113,7 +113,7 @@ function renameClick() {
                         put(appState.mainUrl, JSON.stringify(messagesList[i]));
                         rename(renameDiv, div);
                     }
-            }
+                }
         msg.value = null;
     }
 }
@@ -198,10 +198,10 @@ function ajax(method, url, data, continueWith, continueWithError) {
 
     xhr.onerror = function (e) {
         var errMsg = 'Server connection error !\n' +
-        '\n' +
-        'Check if \n' +
-        '- server is active\n' +
-        '- server sends header "Access-Control-Allow-Origin:*"';
+            '\n' +
+            'Check if \n' +
+            '- server is active\n' +
+            '- server sends header "Access-Control-Allow-Origin:*"';
 
         continueWithError(errMsg);
     };
@@ -215,14 +215,40 @@ function run() {
 
 function createAllMSG(arr) {
     var parentElem = document.body.children[3];
-    for (var i = 0; i < arr.length; i++) {
+    var children = document.getElementById('block2').childNodes;
+    for (var i = 0; i < children.length; i++) {
+        if(children[i].message != arr[i].message){
+            if(arr[i].user == "") {
+                parentElem.removeChild(children[i]);
+                messagesList.splice(i, 1);
+                i--;
+            }
+            else{
+                var div = document.createElement('div');
+                div.setAttribute("onclick", 'select(this)');
+                div.id = arr[i].id;
+                div.user = arr[i].user;
+                div.message = arr[i].message;
+                div.innerHTML = div.user + ': ' + div.message;
+                rename(children[i],  div)
+                messagesList[i].message = msg.value;
+            }
+        }
+    }
+    var temp = arr.length - children.length;
+    var length = children.length;
+    for (var i = 0; i < temp; i++) {
+        var t = i + length;
+        if(arr[t].user != ""){
         var div = document.createElement('div');
         div.setAttribute("onclick", 'select(this)');
-        div.id = arr[i].id;
-        div.user = arr[i].user;
-        div.message = arr[i].message;
+        //var t = i + length;
+        div.id = arr[t].id;
+        div.user = arr[t].user;
+        div.message = arr[t].message;
         div.innerHTML = div.user + ': ' + div.message;
         parentElem.appendChild(div);
-        messagesList.push(arr[i]);
+        messagesList.push(arr[t]);
+        }
     }
 }

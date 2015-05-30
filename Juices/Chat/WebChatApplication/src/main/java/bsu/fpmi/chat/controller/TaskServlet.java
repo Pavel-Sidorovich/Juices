@@ -35,8 +35,8 @@ public class TaskServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-       try {
-           loadHistory();
+        try {
+            loadHistory();
         } catch (SAXException e) {
             logger.error(e);
         } catch (ParserConfigurationException e) {
@@ -58,6 +58,7 @@ public class TaskServlet extends HttpServlet {
             int index = getIndex(token);
             logger.info("Index " + index);
             String tasks = formResponse(index);
+            logger.info(tasks);
             response.setCharacterEncoding(ServletUtil.UTF_8);
             response.setContentType(ServletUtil.APPLICATION_JSON);
             PrintWriter out = response.getWriter();
@@ -130,17 +131,20 @@ public class TaskServlet extends HttpServlet {
         logger.info("doDelete");
         String data = ServletUtil.getMessageBody(request);
         try {
-            JSONObject json = null;
-            json = stringToJson(data);
+            JSONObject json = stringToJson(data);
             Mess mess = jsonToTask(json);
             String id = mess.getId();
             Mess taskToUpdate = MessStorage.getTaskById(id);
-            XMLHistoryUtil.deleteData(taskToUpdate);
-            MessStorage.deleteTaskById(id);
-            response.setStatus(HttpServletResponse.SC_OK);
+            if (taskToUpdate != null) {
+                XMLHistoryUtil.deleteData(taskToUpdate);
+                taskToUpdate.setMessage("");
+                taskToUpdate.setUser("");
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Task does not exist");
+            }
         } catch (ParseException e) {
-            logger.error(e);
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            e.printStackTrace();
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (SAXException e) {
@@ -155,6 +159,7 @@ public class TaskServlet extends HttpServlet {
     @SuppressWarnings("unchecked")
     private String formResponse(int index) {
         JSONObject jsonObject = new JSONObject();
+        logger.info(MessStorage.getSize());
         jsonObject.put(MESSAGES, MessStorage.getSubTasksByIndex(index));
         jsonObject.put(TOKEN, getToken(MessStorage.getSize()));
         return jsonObject.toJSONString();
@@ -166,22 +171,22 @@ public class TaskServlet extends HttpServlet {
         } else {
             XMLHistoryUtil.createStorage();
             addStubData();
-            }
+        }
     }
 
     private void addStubData() throws ParserConfigurationException, TransformerException {
         Mess[] stubMesses = {};
         MessStorage.addAll(stubMesses);
         for (Mess mess : stubMesses) {
-        try {
-             XMLHistoryUtil.addData(mess);
-        } catch (ParserConfigurationException e) {
-           logger.error(e);
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            try {
+                XMLHistoryUtil.addData(mess);
+            } catch (ParserConfigurationException e) {
+                logger.error(e);
+            } catch (SAXException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
